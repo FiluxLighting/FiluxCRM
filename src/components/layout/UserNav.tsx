@@ -17,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { LogOut, User as UserIcon } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function UserNav() {
   const { user } = useUser();
@@ -52,6 +53,7 @@ export function UserNav() {
 
   return (
     <div className="hidden items-center gap-4 md:flex">
+      <ThemeToggle />
       <div className="text-right">
         <p className="text-sm font-medium">{user.displayName || user.email}</p>
         <p className="text-xs text-muted-foreground">Usuario</p>
