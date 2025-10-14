@@ -1,0 +1,3 @@
+companyName,contactPerson,phone,email,address,status,firstContactDate,nextAction,nextActionDate,notes,listName,customFields
+"Empresa de Ejemplo S.A.","Juan Pérez","+34600123456","juan.perez@ejemplo.com","Calle Falsa 123, 28080 Madrid","new","2023-10-27T10:00:00Z","Llamar para seguimiento","2023-11-03T10:00:00Z","Interesado en luminarias LED para oficinas.","Clientes Potenciales","{""presupuesto"": ""5000""}"
+"Luces del Norte S.L.","Ana García","+34600789012","ana.garcia@lucesnorte.com","Avenida de la Luz 45, 08020 Barcelona","contacted","2023-10-25T15:30:00Z","Enviar catálogo","2023-10-30T12:00:00Z","Preguntó por tiras LED flexibles.","Arquitectos","{}"

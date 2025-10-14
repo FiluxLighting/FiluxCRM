@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "Contact": {
+      "title": "Contact",
+      "description": "Represents a contact in the contact management module.",
+      "type": "object",
+      "properties": {
+        "companyName": {
+          "type": "string",
+          "description": "The name of the company the contact is associated with."
+        },
+        "contactPerson": {
+          "type": "string",
+          "description": "The name of the contact person."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The contact's phone number."
+        },
+        "email": {
+          "type": "string",
+          "description": "The contact's email address.",
+          "format": "email"
+        },
+        "address": {
+          "type": "string",
+          "description": "The contact's physical address."
+        },
+        "province": {
+          "type": "string",
+          "description": "The province where the contact is located."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the contact.",
+          "enum": ["new", "contacted", "follow-up", "closed"]
+        },
+        "firstContactDate": {
+          "type": "string",
+          "description": "The date the first contact was made.",
+          "format": "date-time"
+        },
+        "nextAction": {
+          "type": "string",
+          "description": "A description of the next action to be taken with this contact."
+        },
+        "nextActionDate": {
+          "type": "string",
+          "description": "The date the next action should be taken.",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string",
+          "description": "General notes about the contact."
+        },
+        "listName": {
+            "type": "string",
+            "description": "The name of the list the contact belongs to."
+        },
+        "source": {
+          "type": "string",
+          "description": "The source where the contact was found (e.g., URL, event)."
+        }
+      },
+      "required": [
+        "companyName",
+        "contactPerson",
+        "phone",
+        "email",
+        "address",
+        "status",
+        "firstContactDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "/users/{userId}/contacts/{contactId}": {
+      "schema": {
+        "$ref": "#/entities/Contact"
+      },
+      "description": "Stores contact information for each user."
+    }
+  }
+}

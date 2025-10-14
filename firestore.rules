@@ -1,0 +1,79 @@
+/**
+ * @fileoverview Firestore Security Rules for Contact Management Module
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for contact data. Each user has full control over their own contacts, and no cross-user access is permitted.
+ *
+ * Data Structure:
+ * All contact data is nested under /users/{userId}/contacts/{contactId}, ensuring that each user's contacts are isolated and protected.
+ *
+ * Key Security Decisions:
+ * - User-level Isolation: All contacts are stored under the user's ID, making ownership clear and authorization straightforward.
+ * - No User Listing: Listing all users is not permitted.
+ * - Ownership Enforcement: Only the authenticated user who "owns" the contact data can create, read, update, or delete it.
+ *
+ * Denormalization for Authorization:
+ * The user ID is embedded in the Firestore path (/users/{userId}/contacts/{contactId}) to simplify authorization rules. This avoids costly `get()` calls to verify ownership.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Checks if the current user is signed in.
+     * @return {bool} True if the user is signed in, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the provided userId matches the authenticated user's ID.
+     * @param {string} userId The user ID to check.
+     * @return {bool} True if the userId matches the authenticated user's ID, false otherwise.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the provided userId matches the authenticated user's ID and the resource exists.
+     * @param {string} userId The user ID to check.
+     * @return {bool} True if the userId matches the authenticated user's ID and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && exists(resource);
+    }
+
+    match /users/{userId}/contacts/{contactId} {
+      /**
+       * @description Controls access to individual contact documents.
+       * @path /users/{userId}/contacts/{contactId}
+       * @allow (create) - User 'user_abc' can create a new contact with contactId 'contact_123' under their user ID, if the contact's 'id' field matches 'contact_123'.
+       * @allow (get) - User 'user_abc' can get contact with contactId 'contact_123' under their user ID.
+       * @allow (list) - User 'user_abc' can list contacts under their user ID.
+       * @allow (update) - User 'user_abc' can update contact with contactId 'contact_123' under their user ID.
+       * @allow (delete) - User 'user_abc' can delete contact with contactId 'contact_123' under their user ID.
+       * @deny (create) - User 'user_xyz' cannot create a contact under user ID 'user_abc'.
+       * @deny (get) - User 'user_xyz' cannot get contact with contactId 'contact_123' under user ID 'user_abc'.
+       * @deny (list) - User 'user_xyz' cannot list contacts under user ID 'user_abc'.
+       * @deny (update) - User 'user_xyz' cannot update contact with contactId 'contact_123' under user ID 'user_abc'.
+       * @deny (delete) - User 'user_xyz' cannot delete contact with contactId 'contact_123' under user ID 'user_abc'.
+       * @principle Enforces document ownership for all operations.
+       */
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId} {
+        allow get: if false;
+        allow list: if false;
+        allow create: if isSignedIn() && request.auth.uid == userId;
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+    }
+  }
+}
