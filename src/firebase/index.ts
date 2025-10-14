@@ -5,23 +5,32 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
 
-// IMPORTANT: DO NOT MODIFY THIS FUNCTION
+// Initialize Firebase with proper configuration
 export function initializeFirebase() {
   if (!getApps().length) {
-    // Important! initializeApp() is called without any arguments because Firebase App Hosting
-    // integrates with the initializeApp() function to provide the environment variables needed to
-    // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
-    // without arguments.
     let firebaseApp;
+    
+    // Validate that we have the necessary configuration
+    const hasValidConfig = firebaseConfig.apiKey && 
+                          firebaseConfig.authDomain && 
+                          firebaseConfig.projectId;
+    
+    if (!hasValidConfig) {
+      throw new Error(
+        'Firebase configuration is missing. Please ensure all required environment variables are set: ' +
+        'NEXT_PUBLIC_FIREBASE_API_KEY, NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN, NEXT_PUBLIC_FIREBASE_PROJECT_ID'
+      );
+    }
+    
     try {
-      // Attempt to initialize via Firebase App Hosting environment variables
-      firebaseApp = initializeApp();
-    } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+      // For Firebase App Hosting, try auto-initialization first
+      if (process.env.NODE_ENV === "production" && process.env.FIREBASE_PROJECT_ID) {
+        firebaseApp = initializeApp();
+      } else {
+        throw new Error('Using manual config');
       }
+    } catch (e) {
+      // Use explicit configuration (normal for most deployments like Vercel)
       firebaseApp = initializeApp(firebaseConfig);
     }
 

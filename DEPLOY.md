@@ -4,23 +4,37 @@
 
 ### 📋 Variables de entorno para Vercel:
 
-**Obtén las credenciales de Firebase Console:**
+**IMPORTANTE: Configura TODAS estas variables en Vercel Dashboard**
 
-1. Ve a [Firebase Console](https://console.firebase.google.com/)
-2. Selecciona tu proyecto
-3. Ve a "Project Settings" > "General" > "Your apps"
-4. Copia las credenciales de configuración
-5. Configura estas variables en Vercel:
+1. Ve a tu proyecto en Vercel Dashboard
+2. Settings → Environment Variables  
+3. Agrega EXACTAMENTE estas variables (nombres completos):
 
-```
+```bash
+# Variables REQUERIDAS de Firebase
 NEXT_PUBLIC_FIREBASE_API_KEY=tu_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com  
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_messaging_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+
+# Variables OPCIONALES
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=tu_measurement_id
+GOOGLE_GENAI_API_KEY=tu_google_ai_key
 NODE_ENV=production
 ```
+
+**⚠️ NOTA CRÍTICA:** 
+- Los nombres DEBEN empezar con `NEXT_PUBLIC_` para el cliente
+- NO incluir espacios ni caracteres especiales
+- Después de configurar, hacer un nuevo deployment
+
+**🔍 Para obtener las credenciales:**
+1. Ve a [Firebase Console](https://console.firebase.google.com/)
+2. Selecciona tu proyecto → Project Settings
+3. Scroll down a "Your apps" → Web apps
+4. Copia los valores del objeto de configuración
 
 ### 2. Deploy desde GitHub
 
