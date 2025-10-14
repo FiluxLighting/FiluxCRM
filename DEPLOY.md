@@ -2,22 +2,25 @@
 
 ## Pasos para hacer deploy en Vercel
 
-### 1. Preparar las variables de entorno
+### 📋 Variables de entorno para Vercel:
 
-Antes de hacer el deploy, necesitas configurar las siguientes variables de entorno en Vercel:
+**Obtén las credenciales de Firebase Console:**
 
-**Variables requeridas:**
-- `NEXT_PUBLIC_FIREBASE_API_KEY`
-- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
-- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
-- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
-- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
-- `NEXT_PUBLIC_FIREBASE_APP_ID`
-- `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
+1. Ve a [Firebase Console](https://console.firebase.google.com/)
+2. Selecciona tu proyecto
+3. Ve a "Project Settings" > "General" > "Your apps"
+4. Copia las credenciales de configuración
+5. Configura estas variables en Vercel:
 
-**Variables opcionales:**
-- `GOOGLE_GENAI_API_KEY` (para funcionalidades de AI)
-- `NODE_ENV=production`
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+NODE_ENV=production
+```
 
 ### 2. Deploy desde GitHub
 
