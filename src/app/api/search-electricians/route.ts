@@ -27,12 +27,18 @@ export async function GET(request: NextRequest) {
     // Opción 1: Google Places API (requiere API key)
     const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
     
+    console.log('[Search API] Google API Key present:', !!GOOGLE_API_KEY);
+    
     if (GOOGLE_API_KEY) {
       const query = `electricistas ${city} ${province}`;
       const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
       
+      console.log('[Search API] Calling Google Places for:', city, province);
       const response = await fetch(placesUrl);
       const data = await response.json();
+      
+      console.log('[Search API] Google Places status:', data.status);
+      console.log('[Search API] Results count:', data.results?.length || 0);
 
       if (data.status === 'OK') {
         const results: ElectricianResult[] = [];
