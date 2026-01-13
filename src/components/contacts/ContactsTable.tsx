@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FilePenLine, Trash2, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Contact } from "@/lib/types/contact";
 import {
   AlertDialog,
@@ -47,15 +48,28 @@ interface ContactsTableProps {
   contacts: Contact[] | null;
   isLoading: boolean;
   nextActions: string[];
+  selectedContactIds: string[];
+  onSelectContact: (contactId: string) => void;
+  onSelectAll: () => void;
 }
 
-export function ContactsTable({ onEditContact, contacts, isLoading, nextActions }: ContactsTableProps) {
+export function ContactsTable({ 
+  onEditContact, 
+  contacts, 
+  isLoading, 
+  nextActions,
+  selectedContactIds,
+  onSelectContact,
+  onSelectAll
+}: ContactsTableProps) {
   const { user } = useUser();
   const { toast } = useToast();
   const firestore = useFirestore();
 
   const [contactToDelete, setContactToDelete] = useState<Contact | null>(null);
   const [notesContact, setNotesContact] = useState<Contact | null>(null);
+  
+  const allSelected = contacts && contacts.length > 0 && contacts.every(c => selectedContactIds.includes(c.id));
 
 
   const handleStatusChange = async (contact: Contact, newStatus: string) => {
@@ -143,6 +157,12 @@ export function ContactsTable({ onEditContact, contacts, isLoading, nextActions 
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={onSelectAll}
+                />
+              </TableHead>
               <TableHead>Empresa / Contacto</TableHead>
               <TableHead>Contacto</TableHead>
               <TableHead>Próxima Acción</TableHead>
@@ -154,6 +174,12 @@ export function ContactsTable({ onEditContact, contacts, isLoading, nextActions 
           <TableBody>
             {contacts.map((contact) => (
               <TableRow key={contact.id}>
+                <TableCell>
+                  <Checkbox
+                    checked={selectedContactIds.includes(contact.id)}
+                    onCheckedChange={() => onSelectContact(contact.id)}
+                  />
+                </TableCell>
                 <TableCell>
                   <div className="font-medium">{contact.companyName}</div>
                   <div className="text-sm text-muted-foreground">{contact.contactPerson}</div>

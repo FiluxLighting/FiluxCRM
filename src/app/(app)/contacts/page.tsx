@@ -5,6 +5,7 @@ import { Plus, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactsTable } from "@/components/contacts/ContactsTable";
 import { ContactDialog } from "@/components/contacts/ContactDialog";
+import { BulkActions } from "@/components/contacts/BulkActions";
 import type { Contact } from "@/lib/types/contact";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
@@ -34,6 +35,7 @@ const statusOptions: Record<string, string> = {
 export default function ContactsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   
   const [activeList, setActiveList] = useState<string>("all");
   const [activeStatus, setActiveStatus] = useState<string>("all");
@@ -90,6 +92,32 @@ export default function ContactsPage() {
     setDialogOpen(false);
     setSelectedContact(null);
   };
+
+  const handleSelectContact = (contactId: string) => {
+    setSelectedContactIds(prev => 
+      prev.includes(contactId)
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (!filteredContacts) return;
+    
+    const allIds = filteredContacts.map(c => c.id);
+    const allSelected = allIds.every(id => selectedContactIds.includes(id));
+    
+    if (allSelected) {
+      setSelectedContactIds([]);
+    } else {
+      setSelectedContactIds(allIds);
+    }
+  };
+
+  const selectedContacts = useMemo(() => {
+    if (!allContacts) return [];
+    return allContacts.filter(c => selectedContactIds.includes(c.id));
+  }, [allContacts, selectedContactIds]);
 
   return (
     <div className="space-y-8">
@@ -192,7 +220,21 @@ export default function ContactsPage() {
         </Button>
       </div>
 
-      <ContactsTable onEditContact={handleEditContact} contacts={filteredContacts} isLoading={!allContacts} nextActions={nextActions} />
+      <BulkActions 
+        selectedContacts={selectedContacts}
+        onDeselectAll={() => setSelectedContactIds([])}
+        contactLists={contactLists}
+      />
+
+      <ContactsTable 
+        onEditContact={handleEditContact} 
+        contacts={filteredContacts} 
+        isLoading={!allContacts} 
+        nextActions={nextActions}
+        selectedContactIds={selectedContactIds}
+        onSelectContact={handleSelectContact}
+        onSelectAll={handleSelectAll}
+      />
 
       {dialogOpen && (
         <ContactDialog
