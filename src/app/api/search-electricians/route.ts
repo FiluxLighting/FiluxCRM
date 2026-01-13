@@ -27,80 +27,101 @@ export async function GET(request: NextRequest) {
     // Opción 1: Google Places API (requiere API key)
     const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
     
+    console.log('[Search API] Starting search for:', city, province);
     console.log('[Search API] Google API Key present:', !!GOOGLE_API_KEY);
+    console.log('[Search API] API Key length:', GOOGLE_API_KEY?.length || 0);
     
     if (GOOGLE_API_KEY) {
-      const query = `electricistas ${city} ${province}`;
-      const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
-      
-      console.log('[Search API] Calling Google Places for:', city, province);
-      const response = await fetch(placesUrl);
-      const data = await response.json();
-      
-      console.log('[Search API] Google Places status:', data.status);
-      console.log('[Search API] Results count:', data.results?.length || 0);
-
-      if (data.status === 'OK') {
-        const results: ElectricianResult[] = [];
-
-        for (const place of data.results.slice(0, 10)) {
-          // Obtener detalles adicionales (teléfono, website, etc.)
-          const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website&key=${GOOGLE_API_KEY}`;
-          const detailsResponse = await fetch(detailsUrl);
-          const detailsData = await detailsResponse.json();
-
-          if (detailsData.status === 'OK') {
-            const details = detailsData.result;
-            
-            // Extraer email del website si es posible (esto es una aproximación)
-            const emailGuess = details.website 
-              ? `info@${new URL(details.website).hostname.replace('www.', '')}`
-              : '';
-
-            results.push({
-              companyName: details.name || place.name,
-              contactPerson: '—',
-              phone: details.formatted_phone_number || '',
-              email: emailGuess,
-              address: details.formatted_address || place.formatted_address,
-              website: details.website || '',
-            });
-          }
+      try {
+        const query = `electricistas ${city} ${province}`;
+        const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
+        
+        console.log('[Search API] Calling Google Places for:', city, province);
+        const response = await fetch(placesUrl);
+        const data = await response.json();
+        
+        console.log('[Search API] Google Places status:', data.status);
+        console.log('[Search API] Results count:', data.results?.length || 0);
+        
+        if (data.status === 'REQUEST_DENIED') {
+          console.error('[Search API] Google Places REQUEST_DENIED:', data.error_message);
         }
 
-        return NextResponse.json({ results });
+        if (data.status === 'OK') {
+          const results: ElectricianResult[] = [];
+
+          for (const place of data.results.slice(0, 10)) {
+            // Obtener detalles adicionales (teléfono, website, etc.)
+            const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website&key=${GOOGLE_API_KEY}`;
+            const detailsResponse = await fetch(detailsUrl);
+            const detailsData = await detailsResponse.json();
+
+            if (detailsData.status === 'OK') {
+              const details = detailsData.result;
+              
+              // Extraer email del website si es posible (esto es una aproximación)
+              const emailGuess = details.website 
+                ? `info@${new URL(details.website).hostname.replace('www.', '')}`
+                : '';
+
+              results.push({
+                companyName: details.name || place.name,
+                contactPerson: '—',
+                phone: details.formatted_phone_number || '',
+                email: emailGuess,
+                address: details.formatted_address || place.formatted_address,
+                website: details.website || '',
+              });
+            }
+          }
+
+          console.log('[Search API] Returning', results.length, 'results from Google Places');
+          return NextResponse.json({ results });
+        }
+        
+        console.log('[Search API] Google Places failed with status:', data.status);
+      } catch (googleError: any) {
+        console.error('[Search API] Google Places error:', googleError.message);
       }
     }
 
     // Opción 2: Bing Search API (alternativa)
     const BING_API_KEY = process.env.BING_SEARCH_API_KEY;
     
+    console.log('[Search API] Checking Bing API...');
+    
     if (BING_API_KEY) {
-      const query = `electricistas en ${city} ${province} teléfono`;
-      const bingUrl = `https://api.bing.microsoft.com/v7.0/search?q=${encodeURIComponent(query)}&count=10`;
-      
-      const response = await fetch(bingUrl, {
-        headers: {
-          'Ocp-Apim-Subscription-Key': BING_API_KEY,
-        },
-      });
-      
-      const data = await response.json();
-      
-      // Procesar resultados de Bing
-      const results: ElectricianResult[] = data.webPages?.value?.map((result: any) => ({
-        companyName: result.name,
-        contactPerson: '—',
-        phone: extractPhone(result.snippet) || '',
-        email: extractEmail(result.snippet) || '',
-        address: `${city}, ${province}`,
-        website: result.url,
-      })) || [];
+      try {
+        const query = `electricistas en ${city} ${province} teléfono`;
+        const bingUrl = `https://api.bing.microsoft.com/v7.0/search?q=${encodeURIComponent(query)}&count=10`;
+        
+        const response = await fetch(bingUrl, {
+          headers: {
+            'Ocp-Apim-Subscription-Key': BING_API_KEY,
+          },
+        });
+        
+        const data = await response.json();
+        
+        // Procesar resultados de Bing
+        const results: ElectricianResult[] = data.webPages?.value?.map((result: any) => ({
+          companyName: result.name,
+          contactPerson: '—',
+          phone: extractPhone(result.snippet) || '',
+          email: extractEmail(result.snippet) || '',
+          address: `${city}, ${province}`,
+          website: result.url,
+        })) || [];
 
-      return NextResponse.json({ results });
+        console.log('[Search API] Returning', results.length, 'results from Bing');
+        return NextResponse.json({ results });
+      } catch (bingError: any) {
+        console.error('[Search API] Bing error:', bingError.message);
+      }
     }
 
     // Si no hay API configurada, retornar error informativo
+    console.log('[Search API] No API available, returning 503');
     return NextResponse.json(
       { 
         error: 'No search API configured',
