@@ -183,6 +183,16 @@ export function ContactsTable({
                 <TableCell>
                   <div className="font-medium">{contact.companyName}</div>
                   <div className="text-sm text-muted-foreground">{contact.contactPerson}</div>
+                  {contact.website && (
+                    <a 
+                      href={contact.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline block mt-1"
+                    >
+                      {contact.website}
+                    </a>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="text-sm">{contact.email}</div>
