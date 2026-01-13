@@ -243,7 +243,7 @@ export function WebScraperCard() {
           firstContactDate: new Date(),
           nextAction: "Primer contacto",
           nextActionDate: null,
-          notes: `Encontrado en búsqueda web - ${contact.city}, ${contact.province}${contact.comunidad ? ` (${contact.comunidad})` : ''}`,
+          notes: `Encontrado en búsqueda web - ${contact.city}, ${contact.province}${contact.comunidad ? ` (${contact.comunidad})` : ''}${contact.website ? `\nWebsite: ${contact.website}` : ''}`,
           listName: "Scraping Web",
           source: contact.website || "Búsqueda web",
           createdAt: serverTimestamp(),
