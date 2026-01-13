@@ -7,6 +7,7 @@ Una aplicación CRM moderna construida con Next.js, Firebase y AI integrado con 
 - **Gestión de Contactos**: Crear, editar y gestionar contactos con información detallada
 - **Notas y Seguimiento**: Sistema de notas para cada contacto con seguimiento de actividades
 - **Importación/Exportación**: Importa contactos desde CSV y exporta datos
+- **Web Scraper**: Busca automáticamente electricistas en múltiples ciudades (Google Places API)
 - **Interfaz Moderna**: Diseño responsive con Tailwind CSS y componentes de Radix UI
 - **AI Integrado**: Funcionalidades de AI utilizando Google Genkit
 - **Autenticación**: Sistema de autenticación con Firebase Auth
