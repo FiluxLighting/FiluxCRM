@@ -246,6 +246,7 @@ export function WebScraperCard() {
           notes: `Encontrado en búsqueda web - ${contact.city}, ${contact.province}${contact.comunidad ? ` (${contact.comunidad})` : ''}${contact.website ? `\nWebsite: ${contact.website}` : ''}`,
           listName: "Scraping Web",
           source: contact.website || "Búsqueda web",
+          website: contact.website || "",
           createdAt: serverTimestamp(),
         });
       });

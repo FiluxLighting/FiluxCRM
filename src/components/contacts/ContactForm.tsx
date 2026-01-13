@@ -92,6 +92,7 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
       notes: contact?.notes || "",
       listName: contact?.listName || "",
       source: contact?.source || "",
+      website: contact?.website || "",
     },
   });
 
@@ -230,6 +231,19 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
                 <FormLabel>Provincia</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="https://ejemplo.com" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

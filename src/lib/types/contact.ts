@@ -14,6 +14,7 @@ export const contactSchema = z.object({
   notes: z.string().optional(),
   listName: z.string().optional(),
   source: z.string().optional(),
+  website: z.string().optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
@@ -26,4 +27,5 @@ export type Contact = Omit<ContactFormData, 'firstContactDate' | 'nextActionDate
   notes?: string;
   source?: string;
   province?: string;
+  website?: string;
 };
