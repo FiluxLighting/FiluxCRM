@@ -24,6 +24,8 @@ async function getTeleMatelToken(): Promise<string> {
   const USERNAME = 'distri';
   const PASSWORD = 'GOtmt%';
   
+  console.log('[TeleMatel] Authenticating with:', API_URL);
+  
   const response = await fetch(`${API_URL}/apitmt-security/Login`, {
     method: 'POST',
     headers: {
@@ -35,16 +37,31 @@ async function getTeleMatelToken(): Promise<string> {
     }),
   });
 
+  console.log('[TeleMatel] Auth response status:', response.status);
+  
   if (!response.ok) {
-    throw new Error('Failed to authenticate with TeleMatel API');
+    const errorText = await response.text();
+    console.error('[TeleMatel] Auth failed:', errorText);
+    throw new Error(`Failed to authenticate: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
-  return data.token || data.access_token;
+  console.log('[TeleMatel] Auth response keys:', Object.keys(data));
+  
+  const token = data.token || data.access_token || data.bearer_token;
+  
+  if (!token) {
+    console.error('[TeleMatel] No token in response:', data);
+    throw new Error('No token received from authentication');
+  }
+  
+  return token;
 }
 
 async function getCustomers(token: string): Promise<TeleMatelCustomer[]> {
   const API_URL = 'http://fitenergy.erpcloud.telematel.com:8810';
+  
+  console.log('[TeleMatel] Fetching customers with token:', token.substring(0, 20) + '...');
   
   const response = await fetch(`${API_URL}/apitmt-customers/List`, {
     method: 'GET',
@@ -54,16 +71,24 @@ async function getCustomers(token: string): Promise<TeleMatelCustomer[]> {
     },
   });
 
+  console.log('[TeleMatel] Customers response status:', response.status);
+  
   if (!response.ok) {
-    throw new Error('Failed to fetch customers from TeleMatel API');
+    const errorText = await response.text();
+    console.error('[TeleMatel] Customers fetch failed:', errorText);
+    throw new Error(`Failed to fetch customers: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
+  console.log('[TeleMatel] Response structure:', Object.keys(data));
+  console.log('[TeleMatel] Customer count:', data.data?.length || data.customers?.length || 0);
+  
   return data.data || data.customers || [];
 }
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('[TeleMatel API] Starting customer fetch...');
     console.log('[TeleMatel API] Getting authentication token...');
     const token = await getTeleMatelToken();
     console.log('[TeleMatel API] Token obtained successfully');
@@ -78,11 +103,13 @@ export async function GET(request: NextRequest) {
       customers: customers,
     });
   } catch (error: any) {
-    console.error('[TeleMatel API] Error:', error.message);
+    console.error('[TeleMatel API] Error:', error);
+    console.error('[TeleMatel API] Error stack:', error.stack);
     return NextResponse.json(
       {
         success: false,
         error: error.message,
+        details: error.stack,
       },
       { status: 500 }
     );
