@@ -165,9 +165,6 @@ export function ContactsTable({
               </TableHead>
               <TableHead>Empresa / Contacto</TableHead>
               <TableHead>Contacto</TableHead>
-              <TableHead>Cifra Ventas</TableHead>
-              <TableHead>Descuento</TableHead>
-              <TableHead>Última Factura</TableHead>
               <TableHead>Próxima Acción</TableHead>
               <TableHead>Lista</TableHead>
               <TableHead>Estado</TableHead>
@@ -200,21 +197,6 @@ export function ContactsTable({
                 <TableCell>
                   <div className="text-sm">{contact.email}</div>
                   <div className="text-sm text-muted-foreground">{contact.phone}</div>
-                </TableCell>
-                <TableCell>
-                  {contact.salesAmount && (
-                    <div className="text-sm font-medium">{contact.salesAmount}</div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {contact.discount && (
-                    <div className="text-sm">{contact.discount}</div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {contact.lastInvoiceDate && (
-                    <div className="text-sm">{contact.lastInvoiceDate}</div>
-                  )}
                 </TableCell>
                 <TableCell>
                   <EditableNextAction contact={contact} allNextActions={nextActions} />
