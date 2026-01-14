@@ -2,13 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, DatabaseZap, BarChartBig, Building2 } from "lucide-react";
+import { Users, DatabaseZap, BarChartBig } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
 const navItems = [
   { href: "/contacts", label: "Contactos", icon: Users },
-  { href: "/clientes", label: "Clientes", icon: Building2 },
   { href: "/stats", label: "Estadísticas", icon: BarChartBig },
   { href: "/data-tools", label: "Herramientas", icon: DatabaseZap },
 ];
