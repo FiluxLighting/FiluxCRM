@@ -93,9 +93,9 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
       listName: contact?.listName || "",
       source: contact?.source || "",
       website: contact?.website || "",
-      salesAmount: contact?.salesAmount || undefined,
-      discount: contact?.discount || undefined,
-      lastInvoiceDate: toDate(contact?.lastInvoiceDate) || undefined,
+      salesAmount: contact?.salesAmount || "",
+      discount: contact?.discount || "",
+      lastInvoiceDate: contact?.lastInvoiceDate || "",
     },
   });
 
@@ -452,15 +452,13 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
             name="salesAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cifra de Ventas (€)</FormLabel>
+                <FormLabel>Cifra de Ventas</FormLabel>
                 <FormControl>
                   <Input 
-                    type="number" 
-                    step="0.01"
-                    {...field} 
-                    value={field.value ?? ''}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                    placeholder="0.00"
+                    {...field}
+                    disabled
+                    placeholder="Se completa mediante importación"
+                    className="bg-muted"
                   />
                 </FormControl>
                 <FormMessage />
@@ -472,17 +470,13 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
             name="discount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Descuento (%)</FormLabel>
+                <FormLabel>Descuento</FormLabel>
                 <FormControl>
                   <Input 
-                    type="number" 
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    {...field} 
-                    value={field.value ?? ''}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                    placeholder="0"
+                    {...field}
+                    disabled
+                    placeholder="Se completa mediante importación"
+                    className="bg-muted"
                   />
                 </FormControl>
                 <FormMessage />
@@ -493,36 +487,16 @@ export function ContactForm({ contact, onSuccess, contactLists }: ContactFormPro
             control={form.control}
             name="lastInvoiceDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>Última Factura</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(toDate(field.value)!, "PPP")
-                        ) : (
-                          <span>Elige una fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={toDate(field.value) ?? undefined}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <FormControl>
+                  <Input 
+                    {...field}
+                    disabled
+                    placeholder="Se completa mediante importación"
+                    className="bg-muted"
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

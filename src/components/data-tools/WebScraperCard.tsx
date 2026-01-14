@@ -247,9 +247,9 @@ export function WebScraperCard() {
           listName: "Scraping Web",
           source: contact.website || "Búsqueda web",
           website: contact.website || "",
-          salesAmount: 0,
-          discount: 0,
-          lastInvoiceDate: null,
+          salesAmount: "",
+          discount: "",
+          lastInvoiceDate: "",
           createdAt: serverTimestamp(),
         });
       });

@@ -202,22 +202,18 @@ export function ContactsTable({
                   <div className="text-sm text-muted-foreground">{contact.phone}</div>
                 </TableCell>
                 <TableCell>
-                  {contact.salesAmount !== undefined && (
-                    <div className="text-sm font-medium">
-                      {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(contact.salesAmount)}
-                    </div>
+                  {contact.salesAmount && (
+                    <div className="text-sm font-medium">{contact.salesAmount}</div>
                   )}
                 </TableCell>
                 <TableCell>
-                  {contact.discount !== undefined && (
-                    <div className="text-sm">{contact.discount}%</div>
+                  {contact.discount && (
+                    <div className="text-sm">{contact.discount}</div>
                   )}
                 </TableCell>
                 <TableCell>
                   {contact.lastInvoiceDate && (
-                    <div className="text-sm">
-                      {format(toDate(contact.lastInvoiceDate)!, "dd/MM/yyyy", { locale: es })}
-                    </div>
+                    <div className="text-sm">{contact.lastInvoiceDate}</div>
                   )}
                 </TableCell>
                 <TableCell>
