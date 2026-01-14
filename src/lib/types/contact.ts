@@ -15,17 +15,23 @@ export const contactSchema = z.object({
   listName: z.string().optional(),
   source: z.string().optional(),
   website: z.string().optional(),
+  salesAmount: z.number().optional(),
+  discount: z.number().min(0).max(100).optional(),
+  lastInvoiceDate: z.date().optional().nullable(),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 
-export type Contact = Omit<ContactFormData, 'firstContactDate' | 'nextActionDate'> & {
+export type Contact = Omit<ContactFormData, 'firstContactDate' | 'nextActionDate' | 'lastInvoiceDate'> & {
   id: string;
   firstContactDate: any; // Firestore timestamp
   nextActionDate?: any; // Firestore timestamp
+  lastInvoiceDate?: any; // Firestore timestamp
   createdAt?: any;
   notes?: string;
   source?: string;
   province?: string;
   website?: string;
+  salesAmount?: number;
+  discount?: number;
 };

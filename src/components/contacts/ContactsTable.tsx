@@ -165,6 +165,9 @@ export function ContactsTable({
               </TableHead>
               <TableHead>Empresa / Contacto</TableHead>
               <TableHead>Contacto</TableHead>
+              <TableHead>Cifra Ventas</TableHead>
+              <TableHead>Descuento</TableHead>
+              <TableHead>Última Factura</TableHead>
               <TableHead>Próxima Acción</TableHead>
               <TableHead>Lista</TableHead>
               <TableHead>Estado</TableHead>
@@ -197,6 +200,25 @@ export function ContactsTable({
                 <TableCell>
                   <div className="text-sm">{contact.email}</div>
                   <div className="text-sm text-muted-foreground">{contact.phone}</div>
+                </TableCell>
+                <TableCell>
+                  {contact.salesAmount !== undefined && (
+                    <div className="text-sm font-medium">
+                      {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(contact.salesAmount)}
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {contact.discount !== undefined && (
+                    <div className="text-sm">{contact.discount}%</div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {contact.lastInvoiceDate && (
+                    <div className="text-sm">
+                      {format(toDate(contact.lastInvoiceDate)!, "dd/MM/yyyy", { locale: es })}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <EditableNextAction contact={contact} allNextActions={nextActions} />
